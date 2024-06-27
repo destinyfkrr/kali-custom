@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Get the process ID of the openvpn command
+process_id=$(ps aux | grep openvpn | grep -v grep | awk '{print $2}' | head -n 1)
+
+# Check if the process ID is not empty
+if [ -n "$process_id" ]; then
+    echo "Killing process with ID: $process_id"
+    sudo kill $process_id
+else
+    echo "No openvpn process found"
+fi

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Define the VPN connection commands
+thm_vpn_command="sudo openvpn ~/vpn/tryhackme.ovpn"
+htb_vpn_command="sudo openvpn ~/vpn/hackthebox.ovpn"
+htb_academy_vpn_command="sudo openvpn ~/vpn/htbacademy.ovpn"
+
+# Check if the user entered "vpn thm"
+if [ "$1" == "thm" ]; then
+    echo "Connecting to TryHackMe VPN..."
+    # Run the TryHackMe VPN command
+    $thm_vpn_command
+# Check if the user entered "vpn htb"
+elif [ "$1" == "htb" ]; then
+    echo "Connecting to Hack The Box VPN..."
+    # Run the Hack The Box VPN command
+    $htb_vpn_command
+# Check if the user entered "vpn htbacademy"
+elif [ "$1" == "htbacademy" ]; then
+    echo "Connecting to Hack The Box Academy VPN..."
+    # Run the Hack The Box Academy VPN command
+    $htb_academy_vpn_command
+else
+    echo "Invalid command. Please use 'vpn thm', 'vpn htb', or 'vpn htbacademy' to connect to the respective VPNs."
+fi
