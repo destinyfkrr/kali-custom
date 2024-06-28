@@ -30,10 +30,4 @@ chmod +x /opt/tools/chisel/chisellinux /opt/tools/chisel/chiselarm
 # Move the files
 mv scripts/* /usr/bin/
 
-# Basic bash aliases
-echo "Adding bash aliases..."
-echo "alias c='clear'" >> ~/.bashrc
-echo "alias upload='python3 -m http.server 1337'" >> ~/.bashrc
-source ~/.bashrc
-
 echo "Setup complete! Enjoy your Kali Linux environment."
