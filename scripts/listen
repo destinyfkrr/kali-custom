@@ -1,0 +1,28 @@
+#!/bin/bash
+# Simple Metasploit listener script that sets up a reverse shell handler using tun0 interface.
+
+# Check if a port is provided
+if [ -z "$1" ]; then
+  echo "Usage: listen <port>"
+  exit 1
+fi
+
+PORT=$1
+HANDLER_FILE="/tmp/handler.rc"
+
+# Create a resource file for msfconsole in the /tmp directory
+cat << EOF > "$HANDLER_FILE"
+use exploit/multi/handler
+set payload generic/shell_reverse_tcp
+set LHOST tun0
+set LPORT $PORT
+set ExitOnSession false
+exploit -j -z
+EOF
+
+# Start msfconsole with the resource file
+echo "[*] Starting Metasploit listener on port $PORT with ExitOnSession set to false..."
+msfconsole -q -r "$HANDLER_FILE"
+
+# Cleanup the resource file after execution
+rm -f "$HANDLER_FILE"

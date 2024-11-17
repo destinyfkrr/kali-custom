@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Check if the port number is provided
+if [ -z "$1" ]; then
+  echo "Usage: killport <port_number>"
+  exit 1
+fi
+
+# Store the port number from the argument
+PORT=$1
+
+# Find and kill the process using the specified port
+echo "Killing all processes using port $PORT..."
+sudo lsof -t -i:"$PORT" | xargs -r sudo kill -9
+
+echo "Done. Port $PORT is now free."

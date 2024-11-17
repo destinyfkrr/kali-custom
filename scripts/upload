@@ -1,3 +1,21 @@
 #!/bin/bash
-echo "Started web server on port 1337"
-python3 -m http.server 1337
+
+# This script starts a Python HTTP server.
+# User selects the port and directory to serve.
+# Defaults: port 1337, current directory, or /tmp if specified.
+
+# Get the port number (default is 1337)
+read -p "Enter port (default 1337): " port
+port=${port:-1337}
+
+# Get the directory to serve (default is current, or /tmp)
+read -p "Enter directory (Enter for current, 'tmp' for /tmp): " directory
+if [ -z "$directory" ]; then
+    directory=$(pwd)
+elif [ "$directory" == "tmp" ]; then
+    directory="/tmp"
+fi
+
+echo "Starting server on port $port, serving $directory"
+cd "$directory" || { echo "Failed to access $directory"; exit 1; }
+python3 -m http.server "$port"

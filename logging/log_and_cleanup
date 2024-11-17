@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# This script logs all terminal activity in real-time to a timestamped log file
+# and automatically cleans up logs older than 4 days. It is designed to run 
+# each time a new terminal session is opened for continuous logging. The logs 
+# are stored in the ~/logs directory, with the filename containing a timestamp 
+# for easy reference.
+
+# Log directory and file
+logdir="${HOME}/logs"
+logfile="${logdir}/$(date +%F.%H-%M-%S).$$.log"
+
+# Function to clean up logs older than 4 days
+cleanup_logs() {
+    echo "Cleaning up logs older than 4 days..."
+    find "${logdir}" -type f -mtime +4 -exec rm -f {} \;
+}
+
+# Check if logging is already active
+if [[ -z "${UNDER_SCRIPT}" ]]; then
+    # Create log directory if it doesn't exist
+    mkdir -p "${logdir}"
+
+    # Set the log file environment variable
+    export UNDER_SCRIPT="${logfile}"
+    echo "Terminal output is being saved to ${logfile}"
+
+    # Start logging the terminal output in real-time
+    exec script -f -q "${logfile}"
+else
+    echo "Logging is already in progress: ${UNDER_SCRIPT}"
+fi
+
+# Run the log cleanup function
+cleanup_logs

